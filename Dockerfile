@@ -2,6 +2,7 @@ FROM nvidia/cuda:11.7.1-runtime-ubuntu22.04
   
 # To use a different model, change the model URL below:
 ARG MODEL_URL='https://huggingface.co/WarriorMama777/OrangeMixs/blob/main/Models/AbyssOrangeMix3/AOM3.safetensors'
+ARG VAE_URL='https://huggingface.co/WarriorMama777/OrangeMixs/resolve/main/VAEs/orangemix.vae.pt'
 
 # If you are using a private Huggingface model (sign in required to download) insert your Huggingface
 # access token (https://huggingface.co/settings/tokens) below:
