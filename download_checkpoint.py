@@ -5,6 +5,7 @@ import time
 from tqdm import tqdm
 
 MODEL_URL = os.environ.get('MODEL_URL')
+VAE_URL = os.environ.get('VAE_URL')
 HF_TOKEN = os.environ.get('HF_TOKEN', '')
 
 CHUNK_SIZE = 1024 * 1024
@@ -14,7 +15,7 @@ def get_filename(MODEL_URL):
         return 'models/Stable-diffusion/model.safetensors'
     else:
         return 'models/Stable-diffusion/model.ckpt'
-
+    
 def check_model_file(filename):
     file_size_mb = round(os.path.getsize(filename) / (1024 * 1024))
     if file_size_mb < 100:
@@ -53,6 +54,21 @@ def download_other_file(MODEL_URL):
                 f.write(chunk)
                 progress.update(len(chunk))
     check_model_file(filename)
+    
+    
+def download_vae(VAE_URL):
+    filename = 'models/Stable-diffusion/orangemix.vae.pt'
+    print("Model URL:", MODEL_URL)
+    print("Download Location:", filename)
+    time.sleep(1)
+    response = requests.get(MODEL_URL, stream=True)
+    response.raise_for_status()
+    with open(filename, 'wb') as f, tqdm(desc="Downloading", unit="bytes", total=int(response.headers.get('content-length', 0))) as progress:
+        for chunk in response.iter_content(chunk_size=CHUNK_SIZE):
+            if chunk:
+                f.write(chunk)
+                progress.update(len(chunk))
+    check_model_file(filename)
 
 if 'huggingface.co' in MODEL_URL:
     if '/blob/' in MODEL_URL:
@@ -60,3 +76,4 @@ if 'huggingface.co' in MODEL_URL:
     download_hf_file(MODEL_URL, HF_TOKEN)
 else:
     download_other_file(MODEL_URL)
+    download_vae(VAE_URL)
